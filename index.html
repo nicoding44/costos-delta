@@ -147,6 +147,14 @@
             color: #666;
         }
 
+        /* Botones */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
         .btn-calc {
             width: 100%;
             background-color: var(--black);
@@ -158,13 +166,30 @@
             font-weight: 800;
             letter-spacing: 0.5px;
             cursor: pointer;
-            margin-top: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: transform 0.1s;
         }
 
         .btn-calc:active {
             transform: scale(0.98);
+        }
+
+        /* Botón Reset (Estilo Outline) */
+        .btn-reset {
+            width: 100%;
+            background-color: transparent;
+            color: var(--black);
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--black);
         }
 
         .results-card {
@@ -314,7 +339,10 @@
         <input type="number" id="utilidad" value="50" placeholder="50" inputmode="numeric">
     </div>
 
-    <button class="btn-calc" onclick="calcularPago()">CALCULAR PAGO</button>
+    <div class="btn-group">
+        <button class="btn-calc" onclick="calcularPago()">CALCULAR PAGO</button>
+        <button class="btn-reset" onclick="resetCalculator()">NUEVO CÁLCULO</button>
+    </div>
 
     <div id="resultados" class="results-card">
         <div class="result-item">
@@ -370,9 +398,8 @@
         // CLIENTE Y DATOS
         const clienteSeleccionado = document.getElementById('cliente').value; 
         
-        // PIEZAS (CORRECCIÓN COMA vs PUNTO)
+        // PIEZAS (Corrección coma)
         let piezasRaw = document.getElementById('piezas').value;
-        // Reemplazamos coma por punto para que JS haga el cálculo bien
         piezasRaw = piezasRaw.replace(',', '.');
         const numPiezas = parseFloat(piezasRaw) || 0;
 
@@ -441,6 +468,27 @@
         setTimeout(() => {
             boxLatonero.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
+    }
+
+    function resetCalculator() {
+        // Limpiar inputs
+        document.getElementById('cotizacion').value = '';
+        document.getElementById('cliente').selectedIndex = 0; // Vuelve al primero
+        document.getElementById('piezas').value = '';
+        document.getElementById('tipoPintura').selectedIndex = 0;
+        document.getElementById('alistamiento').selectedIndex = 0;
+        document.getElementById('matizada').checked = false;
+        document.getElementById('monteDesmonte').checked = false;
+        document.getElementById('utilidad').value = '50'; // Valor por defecto
+
+        // Ocultar resultados
+        document.getElementById('resultados').style.display = 'none';
+
+        // Poner foco en el primer campo para empezar a escribir de una vez
+        document.getElementById('cotizacion').focus();
+        
+        // Scroll hacia arriba suavemente
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
