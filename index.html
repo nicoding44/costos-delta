@@ -15,6 +15,7 @@
             --white: #ffffff;
             --danger: #d32f2f;
             --success: #2e7d32;
+            --accent-blue: #0056b3; 
         }
 
         * {
@@ -36,15 +37,15 @@
         .container {
             background-color: var(--white);
             width: 100%;
-            max-width: 480px;
-            padding: 30px;
+            max-width: 500px;
+            padding: 25px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         h1 {
@@ -75,7 +76,7 @@
             color: #444;
         }
 
-        /* Inputs Generales */
+        /* Inputs Standard */
         input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 16px;
@@ -95,7 +96,6 @@
             outline: none;
         }
 
-        /* Wrapper para el input de moneda */
         .money-input-wrapper {
             position: relative;
         }
@@ -112,7 +112,101 @@
             padding-left: 30px;
         }
 
-        /* Checkboxes */
+        /* --- NUEVO: ESTILOS PARA EL SELECTOR DE PIEZAS --- */
+        .parts-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .total-pieces-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-pieces-display strong {
+            font-size: 1.1rem;
+            color: var(--black);
+        }
+        
+        .btn-clear-pieces {
+            font-size: 0.75rem;
+            background: #eee;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+            gap: 10px;
+        }
+
+        .part-btn {
+            background: var(--white);
+            border: 1px solid #ddd;
+            padding: 12px 5px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.1s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .part-btn:active {
+            transform: scale(0.96);
+        }
+
+        .part-btn.selected {
+            background-color: var(--black);
+            color: var(--white);
+            border-color: var(--black);
+        }
+
+        .part-value {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .part-count-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: var(--accent-blue);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: none; /* Oculto por defecto */
+        }
+        
+        .part-btn.selected .part-count-badge {
+            display: flex;
+        }
+        /* ------------------------------------------------ */
+
         .checkbox-group {
             display: flex;
             flex-direction: column;
@@ -147,7 +241,6 @@
             color: #666;
         }
 
-        /* Botones */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -167,14 +260,8 @@
             letter-spacing: 0.5px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.1s;
         }
 
-        .btn-calc:active {
-            transform: scale(0.98);
-        }
-
-        /* Botón Reset (Estilo Outline) */
         .btn-reset {
             width: 100%;
             background-color: transparent;
@@ -185,11 +272,6 @@
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-reset:hover {
-            border-color: var(--black);
         }
 
         .results-card {
@@ -273,7 +355,7 @@
 <div class="container">
     <header>
         <h1>Delta Cars</h1>
-        <div class="subtitle">Calculadora Operativa</div>
+        <div class="subtitle">Calculadora Operativa v2.0</div>
     </header>
 
     <div class="form-group">
@@ -294,18 +376,25 @@
         </select>
     </div>
 
-    <div class="form-group" style="display: flex; gap: 15px;">
-        <div style="flex: 1;">
-            <label>N° Piezas</label>
-            <input type="text" id="piezas" placeholder="0" inputmode="decimal">
+    <div class="form-group">
+        <label>Selección de Piezas Pintadas</label>
+        <div class="parts-container">
+            <div class="total-pieces-display">
+                <span>Total: <strong id="display-total-piezas">0</strong> piezas</span>
+                <button class="btn-clear-pieces" onclick="resetParts()">Limpiar Piezas</button>
+            </div>
+            
+            <div class="parts-grid" id="parts-grid-container">
+                </div>
         </div>
-        <div style="flex: 1;">
-            <label>Tipo Pintura</label>
-            <select id="tipoPintura">
-                <option value="bicapa">Bicapa</option>
-                <option value="tricapa">Tricapa</option>
-            </select>
-        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Tipo Pintura</label>
+        <select id="tipoPintura">
+            <option value="bicapa">Bicapa</option>
+            <option value="tricapa">Tricapa</option>
+        </select>
     </div>
 
     <div class="form-group">
@@ -350,7 +439,7 @@
             <span id="res-cotizacion">$0</span>
         </div>
         <div class="result-item">
-            <span>Pago Pintor</span>
+            <span>Total Piezas (<span id="res-num-piezas">0</span>)</span>
             <span id="res-pintor">$0</span>
         </div>
         <div class="result-item">
@@ -374,6 +463,89 @@
 </div>
 
 <script>
+    // --- DATOS DE LAS PIEZAS ---
+    const partsData = [
+        { name: "Estribo", value: 0.5 },
+        { name: "Paral", value: 0.25 },
+        { name: "Batiente", value: 0.25 },
+        { name: "Costado", value: 1.0 },
+        { name: "Guardafango", value: 1.0 },
+        { name: "Bumper", value: 1.0 },
+        { name: "Puerta", value: 1.0 },
+        { name: "Tapa Espejo", value: 0.25 },
+        { name: "Manija", value: 0.25 },
+        { name: "Puntera", value: 0.5 },
+        { name: "Bocel", value: 0.5 },
+        { name: "Capó", value: 1.5 },
+        { name: "Techo Auto", value: 1.5 },
+        { name: "Techo Camioneta", value: 2.0 },
+        { name: "Rin", value: 0.5 },
+        { name: "Puerta Nueva (x2)", value: 1.5 },
+        { name: "Pieza Nueva Gral", value: 1.5 },
+        { name: "Bumper (Negro)", value: 0.5 },
+    ];
+
+    // Estado de las piezas (cuenta cuántas veces se seleccionó cada una)
+    let partsState = new Array(partsData.length).fill(0);
+
+    // --- FUNCIONES DE INICIALIZACIÓN ---
+    function initPartsGrid() {
+        const grid = document.getElementById('parts-grid-container');
+        grid.innerHTML = '';
+
+        partsData.forEach((part, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'part-btn';
+            btn.id = `part-btn-${index}`;
+            btn.onclick = () => togglePart(index);
+            
+            btn.innerHTML = `
+                <span>${part.name}</span>
+                <span class="part-value">(${part.value} pz)</span>
+                <div class="part-count-badge" id="badge-${index}">0</div>
+            `;
+            grid.appendChild(btn);
+        });
+    }
+
+    // --- LÓGICA DE SELECCIÓN DE PIEZAS ---
+    function togglePart(index) {
+        // Incrementa contador
+        partsState[index]++;
+        updatePartUI(index);
+        calculateTotalPieces();
+    }
+
+    function updatePartUI(index) {
+        const btn = document.getElementById(`part-btn-${index}`);
+        const badge = document.getElementById(`badge-${index}`);
+        const count = partsState[index];
+
+        if (count > 0) {
+            btn.classList.add('selected');
+            badge.innerText = `x${count}`;
+        } else {
+            btn.classList.remove('selected');
+        }
+    }
+
+    function calculateTotalPieces() {
+        let total = 0;
+        partsData.forEach((part, index) => {
+            total += part.value * partsState[index];
+        });
+        document.getElementById('display-total-piezas').innerText = total;
+        return total; // Retornamos el valor numérico para usarlo en el cálculo final
+    }
+
+    function resetParts() {
+        partsState.fill(0);
+        partsData.forEach((_, index) => updatePartUI(index));
+        calculateTotalPieces();
+    }
+
+
+    // --- FUNCIONES GENERALES DE LA CALCULADORA ---
     function formatCurrency(input) {
         let value = input.value.replace(/\D/g, '');
         if (value !== '') {
@@ -391,17 +563,13 @@
     }
 
     function calcularPago() {
-        // COTIZACION
         const cotizacionStr = document.getElementById('cotizacion').value;
         const cotizacion = parseCurrency(cotizacionStr);
         
-        // CLIENTE Y DATOS
         const clienteSeleccionado = document.getElementById('cliente').value; 
         
-        // PIEZAS (Corrección coma)
-        let piezasRaw = document.getElementById('piezas').value;
-        piezasRaw = piezasRaw.replace(',', '.');
-        const numPiezas = parseFloat(piezasRaw) || 0;
+        // AHORA LAS PIEZAS VIENEN DE LA FUNCIÓN AUTOMÁTICA
+        const numPiezas = calculateTotalPieces();
 
         const tipoPintura = document.getElementById('tipoPintura').value; 
         const costoAlistamiento = parseFloat(document.getElementById('alistamiento').value) || 0;
@@ -439,6 +607,7 @@
 
         // Renderizado
         document.getElementById('res-cotizacion').innerText = formatMoney(cotizacion);
+        document.getElementById('res-num-piezas').innerText = numPiezas; // Muestra cantidad piezas
         document.getElementById('res-pintor').innerText = formatMoney(costoPintorTotal);
         document.getElementById('res-otros').innerText = formatMoney(otrosCostos);
         
@@ -471,25 +640,25 @@
     }
 
     function resetCalculator() {
-        // Limpiar inputs
         document.getElementById('cotizacion').value = '';
-        document.getElementById('cliente').selectedIndex = 0; // Vuelve al primero
-        document.getElementById('piezas').value = '';
+        document.getElementById('cliente').selectedIndex = 0;
+        
+        // Reset Piezas
+        resetParts();
+        
         document.getElementById('tipoPintura').selectedIndex = 0;
         document.getElementById('alistamiento').selectedIndex = 0;
         document.getElementById('matizada').checked = false;
         document.getElementById('monteDesmonte').checked = false;
-        document.getElementById('utilidad').value = '50'; // Valor por defecto
+        document.getElementById('utilidad').value = '50';
 
-        // Ocultar resultados
         document.getElementById('resultados').style.display = 'none';
-
-        // Poner foco en el primer campo para empezar a escribir de una vez
         document.getElementById('cotizacion').focus();
-        
-        // Scroll hacia arriba suavemente
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // INICIAR GRID AL CARGAR
+    initPartsGrid();
 </script>
 
 </body>
