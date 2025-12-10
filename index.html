@@ -95,7 +95,7 @@
             outline: none;
         }
 
-        /* Estilo específico para la cotización (Moneda) */
+        /* Wrapper para el input de moneda */
         .money-input-wrapper {
             position: relative;
         }
@@ -109,7 +109,7 @@
             z-index: 10;
         }
         .money-input-wrapper input {
-            padding-left: 30px; /* Espacio para el signo $ */
+            padding-left: 30px;
         }
 
         /* Checkboxes */
@@ -272,7 +272,7 @@
     <div class="form-group" style="display: flex; gap: 15px;">
         <div style="flex: 1;">
             <label>N° Piezas</label>
-            <input type="number" id="piezas" placeholder="0" step="0.5" inputmode="decimal">
+            <input type="text" id="piezas" placeholder="0" inputmode="decimal">
         </div>
         <div style="flex: 1;">
             <label>Tipo Pintura</label>
@@ -346,22 +346,15 @@
 </div>
 
 <script>
-    // Función para dar formato visual al input mientras se escribe
     function formatCurrency(input) {
-        // 1. Eliminar cualquier caracter que no sea número
         let value = input.value.replace(/\D/g, '');
-        
-        // 2. Si hay valor, formatearlo con puntos
         if (value !== '') {
-            // Usamos Intl para formato Colombia (puntos de miles)
             input.value = new Intl.NumberFormat('es-CO').format(value);
         }
     }
 
-    // Función auxiliar para convertir el texto formateado (ej: "1.000.000") a número puro (1000000)
     function parseCurrency(valueStr) {
         if (!valueStr) return 0;
-        // Eliminar puntos para poder hacer matemáticas
         return parseFloat(valueStr.replace(/\./g, '')) || 0;
     }
 
@@ -370,12 +363,19 @@
     }
 
     function calcularPago() {
-        // IMPORTANTE: Usamos nuestra función parseCurrency para leer el valor con puntos
+        // COTIZACION
         const cotizacionStr = document.getElementById('cotizacion').value;
         const cotizacion = parseCurrency(cotizacionStr);
         
+        // CLIENTE Y DATOS
         const clienteSeleccionado = document.getElementById('cliente').value; 
-        const numPiezas = parseFloat(document.getElementById('piezas').value) || 0;
+        
+        // PIEZAS (CORRECCIÓN COMA vs PUNTO)
+        let piezasRaw = document.getElementById('piezas').value;
+        // Reemplazamos coma por punto para que JS haga el cálculo bien
+        piezasRaw = piezasRaw.replace(',', '.');
+        const numPiezas = parseFloat(piezasRaw) || 0;
+
         const tipoPintura = document.getElementById('tipoPintura').value; 
         const costoAlistamiento = parseFloat(document.getElementById('alistamiento').value) || 0;
         const incluyeMatizada = document.getElementById('matizada').checked;
