@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora Delta Cars</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        :root {
+            --black: #000000;
+            --dark-gray: #1a1a1a;
+            --light-gray: #f5f5f5;
+            --border-color: #e0e0e0;
+            --white: #ffffff;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--black);
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--white);
+            width: 100%;
+            max-width: 480px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin: 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #444;
+        }
+
+        /* Inputs Generales */
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 16px;
+            background: var(--light-gray);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--black);
+            transition: all 0.2s ease;
+            appearance: none;
+        }
+
+        input:focus, select:focus {
+            background: var(--white);
+            border-color: var(--black);
+            outline: none;
+        }
+
+        /* Estilo específico para la cotización (Moneda) */
+        .money-input-wrapper {
+            position: relative;
+        }
+        .money-input-wrapper span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #666;
+            z-index: 10;
+        }
+        .money-input-wrapper input {
+            padding-left: 30px; /* Espacio para el signo $ */
+        }
+
+        /* Checkboxes */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .checkbox-wrapper:active {
+            background: #e0e0e0;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--black);
+            margin-right: 15px;
+        }
+
+        .price-badge {
+            margin-left: auto;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--black);
+            color: var(--white);
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        .btn-calc:active {
+            transform: scale(0.98);
+        }
+
+        .results-card {
+            margin-top: 30px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .result-item span:last-child {
+            font-weight: 600;
+            color: var(--black);
+        }
+        
+        .result-item.extra-pay {
+            color: var(--success);
+        }
+        .result-item.extra-pay span:last-child {
+            color: var(--success);
+        }
+
+        .final-payout {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .final-payout .label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .final-payout .amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .alert-loss {
+            background-color: #ffebee;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+        .alert-loss .label, .alert-loss .amount {
+            color: var(--danger);
+            opacity: 1;
+        }
+        
+        .delta-profit-real {
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Delta Cars</h1>
+        <div class="subtitle">Calculadora Operativa</div>
+    </header>
+
+    <div class="form-group">
+        <label>Cotización Total</label>
+        <div class="money-input-wrapper">
+            <span>$</span>
+            <input type="text" id="cotizacion" placeholder="0" inputmode="numeric" onkeyup="formatCurrency(this)">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Seleccionar Cliente</label>
+        <select id="cliente">
+            <option value="comagro">Comagro Colisión</option>
+            <option value="autogalias">Autogalias</option>
+            <option value="bravoautos">Bravoautos</option>
+            <option value="personal">Cliente Personal (B2C)</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="display: flex; gap: 15px;">
+        <div style="flex: 1;">
+            <label>N° Piezas</label>
+            <input type="number" id="piezas" placeholder="0" step="0.5" inputmode="decimal">
+        </div>
+        <div style="flex: 1;">
+            <label>Tipo Pintura</label>
+            <select id="tipoPintura">
+                <option value="bicapa">Bicapa</option>
+                <option value="tricapa">Tricapa</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Costos & Adicionales</label>
+        
+        <div style="margin-bottom: 10px;">
+            <select id="alistamiento">
+                <option value="0">Sin Alistamiento</option>
+                <option value="7000">Alist. Quality ($7k)</option>
+                <option value="10000">Alist. Morato ($10k)</option>
+            </select>
+        </div>
+        
+        <div class="checkbox-group">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="matizada">
+                <span>Incluir Matizada</span>
+                <span class="price-badge">+$70.000</span>
+            </label>
+
+            <label class="checkbox-wrapper" style="border: 1px solid #000;">
+                <input type="checkbox" id="monteDesmonte">
+                <span>Monte y Desmonte</span>
+                <span class="price-badge">+$80.000</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Utilidad Delta Objetivo (%)</label>
+        <input type="number" id="utilidad" value="50" placeholder="50" inputmode="numeric">
+    </div>
+
+    <button class="btn-calc" onclick="calcularPago()">CALCULAR PAGO</button>
+
+    <div id="resultados" class="results-card">
+        <div class="result-item">
+            <span>Cotización Cliente</span>
+            <span id="res-cotizacion">$0</span>
+        </div>
+        <div class="result-item">
+            <span>Pago Pintor</span>
+            <span id="res-pintor">$0</span>
+        </div>
+        <div class="result-item">
+            <span>Alistamiento / Matizada</span>
+            <span id="res-otros">$0</span>
+        </div>
+        <div id="row-monte" class="result-item extra-pay" style="display:none;">
+            <span>+ Monte y Desmonte</span>
+            <span>$80.000</span>
+        </div>
+
+        <div id="box-latonero" class="final-payout">
+            <span class="label">Pago Total Latonero</span>
+            <span class="amount" id="res-latonero">$0</span>
+        </div>
+        
+        <div class="delta-profit-real">
+            Ganancia Real Delta: <strong id="res-ganancia-real">$0</strong> (<span id="res-porcentaje-real">0</span>%)
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para dar formato visual al input mientras se escribe
+    function formatCurrency(input) {
+        // 1. Eliminar cualquier caracter que no sea número
+        let value = input.value.replace(/\D/g, '');
+        
+        // 2. Si hay valor, formatearlo con puntos
+        if (value !== '') {
+            // Usamos Intl para formato Colombia (puntos de miles)
+            input.value = new Intl.NumberFormat('es-CO').format(value);
+        }
+    }
+
+    // Función auxiliar para convertir el texto formateado (ej: "1.000.000") a número puro (1000000)
+    function parseCurrency(valueStr) {
+        if (!valueStr) return 0;
+        // Eliminar puntos para poder hacer matemáticas
+        return parseFloat(valueStr.replace(/\./g, '')) || 0;
+    }
+
+    function formatMoney(amount) {
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(amount);
+    }
+
+    function calcularPago() {
+        // IMPORTANTE: Usamos nuestra función parseCurrency para leer el valor con puntos
+        const cotizacionStr = document.getElementById('cotizacion').value;
+        const cotizacion = parseCurrency(cotizacionStr);
+        
+        const clienteSeleccionado = document.getElementById('cliente').value; 
+        const numPiezas = parseFloat(document.getElementById('piezas').value) || 0;
+        const tipoPintura = document.getElementById('tipoPintura').value; 
+        const costoAlistamiento = parseFloat(document.getElementById('alistamiento').value) || 0;
+        const incluyeMatizada = document.getElementById('matizada').checked;
+        const incluyeMonte = document.getElementById('monteDesmonte').checked;
+        const utilidadObjetivo = parseFloat(document.getElementById('utilidad').value) || 0;
+
+        // 1. Calcular Pintor
+        let tarifaPintor = 0;
+        if (clienteSeleccionado === 'personal') {
+            tarifaPintor = (tipoPintura === 'bicapa') ? 120000 : 160000;
+        } else {
+            tarifaPintor = (tipoPintura === 'bicapa') ? 110000 : 150000;
+        }
+        const costoPintorTotal = numPiezas * tarifaPintor;
+
+        // 2. Costos Operativos
+        const costoMatizada = incluyeMatizada ? 70000 : 0;
+        const otrosCostos = costoAlistamiento + costoMatizada;
+
+        // 3. Calcular Base Latonero
+        const gananciaObjetivoDelta = cotizacion * (utilidadObjetivo / 100);
+        const presupuestoProduccion = cotizacion - gananciaObjetivoDelta;
+        
+        let pagoLatoneroBase = presupuestoProduccion - costoPintorTotal - otrosCostos;
+        
+        // 4. Agregar Monte y Desmonte
+        const costoMonte = incluyeMonte ? 80000 : 0;
+        const pagoLatoneroTotal = pagoLatoneroBase + costoMonte;
+
+        // 5. Ganancia REAL
+        const totalPagado = costoPintorTotal + otrosCostos + pagoLatoneroTotal;
+        const gananciaReal = cotizacion - totalPagado;
+        const porcentajeReal = cotizacion > 0 ? (gananciaReal / cotizacion) * 100 : 0;
+
+        // Renderizado
+        document.getElementById('res-cotizacion').innerText = formatMoney(cotizacion);
+        document.getElementById('res-pintor').innerText = formatMoney(costoPintorTotal);
+        document.getElementById('res-otros').innerText = formatMoney(otrosCostos);
+        
+        const rowMonte = document.getElementById('row-monte');
+        if (incluyeMonte) {
+            rowMonte.style.display = 'flex';
+        } else {
+            rowMonte.style.display = 'none';
+        }
+        
+        const elLatonero = document.getElementById('res-latonero');
+        const boxLatonero = document.getElementById('box-latonero');
+        
+        elLatonero.innerText = formatMoney(pagoLatoneroTotal);
+
+        if (pagoLatoneroTotal < 0) {
+            boxLatonero.classList.add('alert-loss');
+        } else {
+            boxLatonero.classList.remove('alert-loss');
+        }
+
+        document.getElementById('res-ganancia-real').innerText = formatMoney(gananciaReal);
+        document.getElementById('res-porcentaje-real').innerText = porcentajeReal.toFixed(1);
+
+        document.getElementById('resultados').style.display = 'block';
+        
+        setTimeout(() => {
+            boxLatonero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
