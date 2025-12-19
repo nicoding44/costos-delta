@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
-    <title>Cotizador Delta Cars</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Calculadora Delta Cars</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
         :root {
             --black: #000000;
             --dark-gray: #1a1a1a;
-            --mid-gray: #666666;
-            --light-gray: #f4f4f4;
+            --light-gray: #f5f5f5;
+            --border-color: #e0e0e0;
             --white: #ffffff;
-            --accent-gray: #e6e6e6;
-            --border-radius: 14px;
-            --shadow: 0 10px 30px rgba(0,0,0,0.06);
-            --footer-height: 140px;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+            --accent-blue: #0056b3; 
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -24,860 +28,637 @@
             background-color: var(--light-gray);
             color: var(--black);
             margin: 0;
-            padding: 20px 20px var(--footer-height) 20px;
-            min-height: 100vh;
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            box-sizing: border-box;
+            min-height: 100vh;
         }
 
         .container {
+            background-color: var(--white);
             width: 100%;
             max-width: 500px;
-            background: var(--white);
-            padding: 25px 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
 
-        /* HEADER MEJORADO */
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        header {
+            text-align: center;
             margin-bottom: 25px;
         }
 
-        .logo-group h1 {
-            font-size: 1.6rem;
+        h1 {
             font-weight: 800;
             letter-spacing: -1px;
-            text-transform: uppercase;
             margin: 0;
-            line-height: 1;
+            font-size: 1.8rem;
+            text-transform: uppercase;
         }
 
-        .logo-group .subtitle {
-            font-size: 0.8rem;
-            color: var(--mid-gray);
-            margin-top: 4px;
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
         }
 
-        .btn-reset {
-            background: transparent;
-            border: 1px solid #ffcccc;
-            color: #ff3b30;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .btn-reset:active {
-            background: #ffe5e5;
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 700;
-            font-size: 0.75rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--mid-gray);
+            color: #444;
         }
 
-        /* CHIPS DE CATEGORÍA (NUEVO) */
-        .category-chips {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 5px; /* Espacio para scrollbar si aparece */
-            margin-bottom: 20px;
-            /* Ocultar scrollbar visualmente pero permitir scroll */
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
-        }
-        .category-chips::-webkit-scrollbar { display: none; }
-
-        .chip {
-            padding: 10px 16px;
-            background-color: var(--light-gray);
-            color: var(--mid-gray);
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .chip.active {
-            background-color: var(--black);
-            color: var(--white);
-            transform: scale(1.02);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        /* INPUTS */
-        select, input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: 2px solid var(--light-gray);
-            border-radius: 10px;
-            font-size: 16px !important;
-            color: var(--black);
-            background: var(--white);
-            outline: none;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            font-family: 'Inter', sans-serif;
-        }
-
-        select:focus, input:focus {
-            border-color: var(--black);
-        }
-        
-        select {
-             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
-        }
-
-        /* Layout Cantidad + Botón */
-        .add-row {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            margin-bottom: 15px;
-        }
-
-        .qty-group {
-            width: 80px;
-            flex-shrink: 0;
-        }
-
-        .btn-add {
+        /* Inputs Standard */
+        input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 16px;
-            background-color: var(--black);
-            color: var(--white);
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            background: var(--light-gray);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            margin-bottom: 12px;
+            color: var(--black);
+            transition: all 0.2s ease;
+            appearance: none;
         }
 
-        .btn-add:active {
+        input:focus, select:focus {
+            background: var(--white);
+            border-color: var(--black);
+            outline: none;
+        }
+
+        .money-input-wrapper {
+            position: relative;
+        }
+        .money-input-wrapper span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #666;
+            z-index: 10;
+        }
+        .money-input-wrapper input {
+            padding-left: 30px;
+        }
+
+        /* --- NUEVO: ESTILOS PARA EL SELECTOR DE PIEZAS --- */
+        .parts-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .total-pieces-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-pieces-display strong {
+            font-size: 1.1rem;
+            color: var(--black);
+        }
+        
+        .btn-clear-pieces {
+            font-size: 0.75rem;
+            background: #eee;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+            gap: 10px;
+        }
+
+        .part-btn {
+            background: var(--white);
+            border: 1px solid #ddd;
+            padding: 12px 5px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.1s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .part-btn:active {
             transform: scale(0.96);
         }
 
-        /* Extras Section */
-        .extras-section {
-            margin-top: 25px;
-            border-top: 1px dashed #ddd; /* Línea punteada más sutil */
-            padding-top: 20px;
-        }
-
-        .toggle-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .toggle-label {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .select-inline {
-            width: auto;
-            min-width: 90px;
-            margin-bottom: 0;
-            padding: 8px 30px 8px 12px;
-            font-size: 0.9rem !important;
-            border-color: #eee;
-            background-color: #fafafa;
-            text-align: right;
-        }
-        
-        /* Switch mejorado visualmente */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #e0e0e0;
-            transition: .3s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        input:checked + .slider { background-color: var(--black); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        /* Lista de Items */
-        .item-list {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0 0 0;
-        }
-
-        .item-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.95rem;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .item-info {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        
-        .qty-badge {
-            background: var(--light-gray);
-            color: var(--black);
-            border: 1px solid #ddd;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            height: fit-content;
-        }
-
-        .btn-remove {
-            background: none;
-            border: none;
-            color: #ff3b30;
-            padding: 0 0 0 15px;
-            font-size: 1.4rem;
-            line-height: 1;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* --- STICKY FOOTER --- */
-        .sticky-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95); /* Semi transparente */
-            backdrop-filter: blur(10px); /* Efecto vidrio (Apple style) */
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.08);
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 1000;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .sticky-footer.hidden {
-            transform: translateY(120%); 
-        }
-
-        .footer-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--mid-gray);
-            margin-bottom: 2px;
-        }
-        
-        .footer-total-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-total-label {
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .footer-total-amount {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--black);
-        }
-
-        .btn-copy {
-            width: 100%;
-            padding: 16px;
+        .part-btn.selected {
             background-color: var(--black);
             color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
+            border-color: var(--black);
+        }
+
+        .part-value {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .part-count-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: var(--accent-blue);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: none; /* Oculto por defecto */
+        }
+        
+        .part-btn.selected .part-count-badge {
+            display: flex;
+        }
+        /* ------------------------------------------------ */
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
             transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-copy:active {
-            transform: scale(0.98);
-            background-color: #333;
+        .checkbox-wrapper:active {
+            background: #e0e0e0;
         }
 
-        #toast {
-            visibility: hidden;
-            min-width: 200px;
-            background-color: #111;
-            color: #fff;
-            text-align: center;
-            border-radius: 50px;
-            padding: 14px 20px;
-            position: fixed;
-            z-index: 2000;
-            left: 50%;
-            bottom: 160px;
-            transform: translateX(-50%);
-            font-size: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-            font-weight: 600;
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--black);
+            margin-right: 15px;
         }
 
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 170px;
+        .price-badge {
+            margin-left: auto;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #666;
         }
 
-        .hidden { display: none !important; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
         }
-        .animate-in {
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--black);
+            color: var(--white);
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-reset {
+            width: 100%;
+            background-color: transparent;
+            color: var(--black);
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .results-card {
+            margin-top: 30px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 20px;
+            display: none;
             animation: fadeIn 0.3s ease-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .result-item span:last-child {
+            font-weight: 600;
+            color: var(--black);
+        }
+        
+        .result-item.extra-pay {
+            color: var(--success);
+        }
+        .result-item.extra-pay span:last-child {
+            color: var(--success);
+        }
+
+        .final-payout {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .final-payout .label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .final-payout .amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .alert-loss {
+            background-color: #ffebee;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+        .alert-loss .label, .alert-loss .amount {
+            color: var(--danger);
+            opacity: 1;
+        }
+        
+        .delta-profit-real {
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-row">
-        <div class="logo-group">
-            <h1 class="logo">Delta Cars</h1>
-            <div class="subtitle">Cotizador Pro</div>
+    <header>
+        <h1>Delta Cars</h1>
+        <div class="subtitle">Calculadora Operativa v2.0</div>
+    </header>
+
+    <div class="form-group">
+        <label>Cotización Total</label>
+        <div class="money-input-wrapper">
+            <span>$</span>
+            <input type="text" id="cotizacion" placeholder="0" inputmode="numeric" onkeyup="formatCurrency(this)">
         </div>
-        <button class="btn-reset" onclick="resetQuote()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path></svg>
-            Nueva
-        </button>
     </div>
 
-    <label>1. Categoría</label>
-    <div class="category-chips" id="category-chips">
-        <button class="chip" onclick="selectCategory('pintura', this)">Pintura</button>
-        <button class="chip" onclick="selectCategory('latoneria', this)">Latonería</button>
-        <button class="chip" onclick="selectCategory('otros', this)">Rines y Otros</button>
+    <div class="form-group">
+        <label>Seleccionar Cliente</label>
+        <select id="cliente">
+            <option value="comagro">Comagro Colisión</option>
+            <option value="autogalias">Autogalias</option>
+            <option value="bravoautos">Bravoautos</option>
+            <option value="personal">Cliente Personal (B2C)</option>
+        </select>
     </div>
-    <input type="hidden" id="category" value="">
 
-    <div id="item-group">
-        <label for="search-input">2. Servicio / Pieza</label>
-        <input type="text" id="search-input" placeholder="🔍 Buscar (ej. Puerta, Capó...)" onkeyup="filterItems()" disabled>
+    <div class="form-group">
+        <label>Selección de Piezas Pintadas</label>
+        <div class="parts-container">
+            <div class="total-pieces-display">
+                <span>Total: <strong id="display-total-piezas">0</strong> piezas</span>
+                <button class="btn-clear-pieces" onclick="resetParts()">Limpiar Piezas</button>
+            </div>
+            
+            <div class="parts-grid" id="parts-grid-container">
+                </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Tipo Pintura</label>
+        <select id="tipoPintura">
+            <option value="bicapa">Bicapa</option>
+            <option value="tricapa">Tricapa</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Costos & Adicionales</label>
         
-        <select id="item" disabled onchange="checkFinishOption()">
-            <option value="">Selecciona una categoría arriba 👆</option>
-        </select>
-    </div>
-
-    <div class="hidden animate-in" id="finish-group">
-        <label for="finish">3. Acabado</label>
-        <select id="finish">
-            <option value="bicapa">Bicapa (Estándar)</option>
-            <option value="tricapa">Tricapa (Perlado)</option>
-        </select>
-    </div>
-    
-    <div class="add-row">
-        <div class="qty-group">
-            <label for="quantity">Cant.</label>
-            <input type="number" id="quantity" value="1" min="1">
-        </div>
-        <button class="btn-add" onclick="addItem()">+ Agregar Item</button>
-    </div>
-
-    <div class="extras-section">
-        <div class="toggle-row">
-            <span class="toggle-label">Descuento</span>
-            <select id="discount-select" class="select-inline" onchange="renderCart()">
-                <option value="0">0%</option>
-                <option value="0.05">5%</option>
-                <option value="0.10">10%</option>
-                <option value="0.20">20%</option>
+        <div style="margin-bottom: 10px;">
+            <select id="alistamiento">
+                <option value="0">Sin Alistamiento</option>
+                <option value="7000">Alist. Quality ($7k)</option>
+                <option value="10000">Alist. Morato ($10k)</option>
             </select>
         </div>
-
-        <div class="toggle-row">
-            <span class="toggle-label">Tiempo Entrega</span>
-            <select id="time-select" class="select-inline">
-                </select>
-        </div>
-
-        <div class="toggle-row">
-            <span class="toggle-label">Incluir Lavado (+$10k)</span>
-            <label class="switch">
-                <input type="checkbox" id="check-lavado" onchange="renderCart()" checked>
-                <span class="slider"></span>
+        
+        <div class="checkbox-group">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="matizada">
+                <span>Incluir Matizada</span>
+                <span class="price-badge">+$70.000</span>
             </label>
-        </div>
-        <div class="toggle-row">
-            <span class="toggle-label">Aplicar IVA (19%)</span>
-            <label class="switch">
-                <input type="checkbox" id="check-iva" onchange="renderCart()">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="toggle-row">
-            <span class="toggle-label">Pago Wompi (+5%)</span>
-            <label class="switch">
-                <input type="checkbox" id="check-wompi" onchange="renderCart()">
-                <span class="slider"></span>
+
+            <label class="checkbox-wrapper" style="border: 1px solid #000;">
+                <input type="checkbox" id="monteDesmonte">
+                <span>Monte y Desmonte</span>
+                <span class="price-badge">+$80.000</span>
             </label>
         </div>
     </div>
 
-    <ul class="item-list" id="cart-list">
-        </ul>
-    
-    <div style="height: 20px;"></div>
+    <div class="form-group">
+        <label>Utilidad Delta Objetivo (%)</label>
+        <input type="number" id="utilidad" value="50" placeholder="50" inputmode="numeric">
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-calc" onclick="calcularPago()">CALCULAR PAGO</button>
+        <button class="btn-reset" onclick="resetCalculator()">NUEVO CÁLCULO</button>
+    </div>
+
+    <div id="resultados" class="results-card">
+        <div class="result-item">
+            <span>Cotización Cliente</span>
+            <span id="res-cotizacion">$0</span>
+        </div>
+        <div class="result-item">
+            <span>Total Piezas (<span id="res-num-piezas">0</span>)</span>
+            <span id="res-pintor">$0</span>
+        </div>
+        <div class="result-item">
+            <span>Alistamiento / Matizada</span>
+            <span id="res-otros">$0</span>
+        </div>
+        <div id="row-monte" class="result-item extra-pay" style="display:none;">
+            <span>+ Monte y Desmonte</span>
+            <span>$80.000</span>
+        </div>
+
+        <div id="box-latonero" class="final-payout">
+            <span class="label">Pago Total Latonero</span>
+            <span class="amount" id="res-latonero">$0</span>
+        </div>
+        
+        <div class="delta-profit-real">
+            Ganancia Real Delta: <strong id="res-ganancia-real">$0</strong> (<span id="res-porcentaje-real">0</span>%)
+        </div>
+    </div>
 </div>
-
-<div class="sticky-footer hidden" id="sticky-footer">
-    <div class="footer-details">
-        <span id="footer-extras-text">Base + Extras</span>
-        <span id="footer-discount-text" style="color: #25D366; display: none;">Desc. aplicado</span>
-    </div>
-    
-    <div class="footer-total-row">
-        <span class="footer-total-label">TOTAL:</span>
-        <span class="footer-total-amount" id="display-total">$0</span>
-    </div>
-
-    <button class="btn-copy" onclick="copyToClipboard()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-        Copiar Mensaje
-    </button>
-</div>
-
-<div id="toast">¡Copiado! Listo para pegar</div>
 
 <script>
-    // --- INIT ---
-    window.onload = function() {
-        const timeSelect = document.getElementById('time-select');
-        for (let i = 1; i <= 30; i++) {
-            let option = document.createElement('option');
-            option.value = i;
-            option.text = i + (i === 1 ? ' día' : ' días');
-            if (i === 3) option.selected = true; 
-            timeSelect.add(option);
-        }
-        renderCart();
-    };
+    // --- DATOS DE LAS PIEZAS ---
+    const partsData = [
+        { name: "Estribo", value: 0.5 },
+        { name: "Paral", value: 0.25 },
+        { name: "Batiente", value: 0.25 },
+        { name: "Costado", value: 1.0 },
+        { name: "Guardafango", value: 1.0 },
+        { name: "Bumper", value: 1.0 },
+        { name: "Puerta", value: 1.0 },
+        { name: "Tapa Espejo", value: 0.25 },
+        { name: "Manija", value: 0.25 },
+        { name: "Puntera", value: 0.5 },
+        { name: "Bocel", value: 0.5 },
+        { name: "Capó", value: 1.5 },
+        { name: "Techo Auto", value: 1.5 },
+        { name: "Techo Camioneta", value: 2.0 },
+        { name: "Rin", value: 0.5 },
+        { name: "Puerta Nueva (x2)", value: 1.5 },
+        { name: "Pieza Nueva Gral", value: 1.5 },
+        { name: "Bumper (Negro)", value: 0.5 },
+    ];
 
-    // --- LOGICA DE CHIPS ---
-    function selectCategory(catName, btnElement) {
-        // 1. Actualizar input oculto
-        document.getElementById('category').value = catName;
-        
-        // 2. Manejar clases visuales (active)
-        const buttons = document.querySelectorAll('.chip');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
+    // Estado de las piezas (cuenta cuántas veces se seleccionó cada una)
+    let partsState = new Array(partsData.length).fill(0);
 
-        // 3. Ejecutar lógica de actualización
-        updateItems();
+    // --- FUNCIONES DE INICIALIZACIÓN ---
+    function initPartsGrid() {
+        const grid = document.getElementById('parts-grid-container');
+        grid.innerHTML = '';
+
+        partsData.forEach((part, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'part-btn';
+            btn.id = `part-btn-${index}`;
+            btn.onclick = () => togglePart(index);
+            
+            btn.innerHTML = `
+                <span>${part.name}</span>
+                <span class="part-value">(${part.value} pz)</span>
+                <div class="part-count-badge" id="badge-${index}">0</div>
+            `;
+            grid.appendChild(btn);
+        });
     }
 
-    // --- RESETEO TOTAL ---
-    function resetQuote() {
-        if(confirm("¿Borrar cotización actual?")) {
-            cart = [];
-            document.getElementById('discount-select').value = "0";
-            document.getElementById('check-lavado').checked = true;
-            document.getElementById('check-iva').checked = false;
-            document.getElementById('check-wompi').checked = false;
-            
-            // Limpiar inputs visuales
-            document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
-            document.getElementById('category').value = "";
-            document.getElementById('item').innerHTML = '<option value="">Selecciona una categoría arriba 👆</option>';
-            document.getElementById('item').disabled = true;
-            document.getElementById('search-input').disabled = true;
-            document.getElementById('search-input').value = "";
-            document.getElementById('finish-group').classList.add('hidden');
-            
-            renderCart();
+    // --- LÓGICA DE SELECCIÓN DE PIEZAS ---
+    function togglePart(index) {
+        // Incrementa contador
+        partsState[index]++;
+        updatePartUI(index);
+        calculateTotalPieces();
+    }
+
+    function updatePartUI(index) {
+        const btn = document.getElementById(`part-btn-${index}`);
+        const badge = document.getElementById(`badge-${index}`);
+        const count = partsState[index];
+
+        if (count > 0) {
+            btn.classList.add('selected');
+            badge.innerText = `x${count}`;
+        } else {
+            btn.classList.remove('selected');
         }
     }
 
-    // --- BASE DE DATOS ---
-    const pricesDB = {
-        pintura: [
-            { id: 'tapa_gasolina', name: 'Tapa de Gasolina', base: 90000, hasTricapa: false },
-            { id: 'plasticos', name: 'Plásticos', base: 200000, hasTricapa: false },
-            { id: 'estribo', name: 'Estribo', base: 150000, tricapa: 175000, hasTricapa: true },
-            { id: 'paral', name: 'Paral', base: 75000, tricapa: 87500, hasTricapa: true },
-            { id: 'batiente', name: 'Batiente', base: 75000, tricapa: 87500, hasTricapa: true },
-            { id: 'costado', name: 'Costado', base: 250000, tricapa: 350000, hasTricapa: true },
-            { id: 'guardafango', name: 'Guardafango', base: 250000, tricapa: 350000, hasTricapa: true },
-            { id: 'bumper', name: 'Bumper', base: 350000, tricapa: 450000, hasTricapa: true },
-            { id: 'puerta', name: 'Puerta (Sola)', base: 250000, tricapa: 350000, hasTricapa: true },
-            { id: 'puerta_comp', name: 'Puerta Completa', base: 450000, tricapa: 525000, hasTricapa: true },
-            { id: 'espejo', name: 'Espejo', base: 75000, tricapa: 87500, hasTricapa: true },
-            { id: 'manija', name: 'Manija', base: 75000, tricapa: 87500, hasTricapa: true },
-            { id: 'puntera', name: 'Puntera', base: 100000, tricapa: 120000, hasTricapa: true },
-            { id: 'capo', name: 'Capó', base: 450000, tricapa: 525000, hasTricapa: true },
-            { id: 'techo', name: 'Techo (Auto)', base: 450000, tricapa: 525000, hasTricapa: true },
-            { id: 'techo_cam', name: 'Techo (Camioneta)', base: 600000, tricapa: 700000, hasTricapa: true },
-            { id: 'baul', name: 'Baúl', base: 250000, hasTricapa: false }
-        ],
-        latoneria: [
-            { id: 'lat_media_pieza', name: 'Latonería Media Pieza', base: 390000 },
-            { id: 'lat_leve', name: 'Latonería Leve', base: 350000 },
-            { id: 'lat_media', name: 'Latonería Media', base: 700000 },
-            { id: 'lat_fuerte', name: 'Latonería Fuerte', base: 1000000 },
-            { id: 'monte', name: 'Monte y Desmonte', base: 160000 },
-            { id: 'pdr_pq', name: 'Sacabollos (PDR) Pequeño', base: 150000 },
-            { id: 'pdr_med', name: 'Sacabollos (PDR) Medio', base: 400000 }
-        ],
-        otros: [
-            { id: 'rin_bicapa', name: 'Pintura Rin (Bicapa)', base: 150000 },
-            { id: 'rin_diam', name: 'Pintura Rin (Diamantado)', base: 250000 },
-            { id: 'partes_negras', name: 'Pintura Partes Negras', base: 150000 },
-            { id: 'brillada', name: 'Brillada de Pieza', base: 50000 }
-        ]
-    };
+    function calculateTotalPieces() {
+        let total = 0;
+        partsData.forEach((part, index) => {
+            total += part.value * partsState[index];
+        });
+        document.getElementById('display-total-piezas').innerText = total;
+        return total; // Retornamos el valor numérico para usarlo en el cálculo final
+    }
 
-    let cart = [];
-    let currentItem = null;
-    let currentCategoryList = []; 
-    let hasLatoneria = false; 
+    function resetParts() {
+        partsState.fill(0);
+        partsData.forEach((_, index) => updatePartUI(index));
+        calculateTotalPieces();
+    }
+
+
+    // --- FUNCIONES GENERALES DE LA CALCULADORA ---
+    function formatCurrency(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value !== '') {
+            input.value = new Intl.NumberFormat('es-CO').format(value);
+        }
+    }
+
+    function parseCurrency(valueStr) {
+        if (!valueStr) return 0;
+        return parseFloat(valueStr.replace(/\./g, '')) || 0;
+    }
 
     function formatMoney(amount) {
-        return '$' + Math.round(amount).toLocaleString('es-CO');
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(amount);
     }
 
-    function updateItems() {
-        const category = document.getElementById('category').value; // Viene del chip seleccionado
-        const itemSelect = document.getElementById('item');
-        const searchInput = document.getElementById('search-input');
+    function calcularPago() {
+        const cotizacionStr = document.getElementById('cotizacion').value;
+        const cotizacion = parseCurrency(cotizacionStr);
         
-        itemSelect.innerHTML = '<option value="">-- Selecciona --</option>';
-        searchInput.value = ''; 
-        document.getElementById('finish-group').classList.add('hidden');
-        currentItem = null;
+        const clienteSeleccionado = document.getElementById('cliente').value; 
+        
+        // AHORA LAS PIEZAS VIENEN DE LA FUNCIÓN AUTOMÁTICA
+        const numPiezas = calculateTotalPieces();
 
-        if (category && pricesDB[category]) {
-            currentCategoryList = pricesDB[category];
-            renderOptions(currentCategoryList);
-            itemSelect.disabled = false;
-            searchInput.disabled = false;
+        const tipoPintura = document.getElementById('tipoPintura').value; 
+        const costoAlistamiento = parseFloat(document.getElementById('alistamiento').value) || 0;
+        const incluyeMatizada = document.getElementById('matizada').checked;
+        const incluyeMonte = document.getElementById('monteDesmonte').checked;
+        const utilidadObjetivo = parseFloat(document.getElementById('utilidad').value) || 0;
+
+        // 1. Calcular Pintor
+        let tarifaPintor = 0;
+        if (clienteSeleccionado === 'personal') {
+            tarifaPintor = (tipoPintura === 'bicapa') ? 120000 : 160000;
         } else {
-            itemSelect.disabled = true;
-            searchInput.disabled = true;
-            currentCategoryList = [];
+            tarifaPintor = (tipoPintura === 'bicapa') ? 110000 : 150000;
         }
-    }
+        const costoPintorTotal = numPiezas * tarifaPintor;
 
-    function renderOptions(list) {
-        const itemSelect = document.getElementById('item');
-        itemSelect.innerHTML = '<option value="">-- Selecciona --</option>'; 
-        list.forEach((item) => {
-            const option = document.createElement('option');
-            option.value = JSON.stringify(item); 
-            option.text = item.name + ` (Desde ${formatMoney(item.base)})`;
-            itemSelect.add(option);
-        });
-    }
+        // 2. Costos Operativos
+        const costoMatizada = incluyeMatizada ? 70000 : 0;
+        const otrosCostos = costoAlistamiento + costoMatizada;
 
-    function filterItems() {
-        const searchText = document.getElementById('search-input').value.toLowerCase();
-        const filteredList = currentCategoryList.filter(item => 
-            item.name.toLowerCase().includes(searchText)
-        );
-        renderOptions(filteredList);
-    }
-
-    function checkFinishOption() {
-        const selectedValue = document.getElementById('item').value;
-        if (selectedValue !== "") {
-            const item = JSON.parse(selectedValue);
-            currentItem = item;
-            const finishGroup = document.getElementById('finish-group');
-            if (item.hasTricapa) {
-                finishGroup.classList.remove('hidden');
-            } else {
-                finishGroup.classList.add('hidden');
-            }
-        }
-    }
-
-    function addItem() {
-        if (!currentItem) {
-            alert("Primero selecciona una categoría y un servicio.");
-            return;
-        }
-
-        const category = document.getElementById('category').value;
-        const qtyInput = document.getElementById('quantity');
-        let qty = parseInt(qtyInput.value);
-        if (qty < 1) qty = 1;
-
-        if (category === 'latoneria') hasLatoneria = true;
-
-        let unitPrice = currentItem.base;
-        let finishName = "Estándar";
-
-        const finishSelect = document.getElementById('finish');
-        const finishGroup = document.getElementById('finish-group');
+        // 3. Calcular Base Latonero
+        const gananciaObjetivoDelta = cotizacion * (utilidadObjetivo / 100);
+        const presupuestoProduccion = cotizacion - gananciaObjetivoDelta;
         
-        if (!finishGroup.classList.contains('hidden') && finishSelect.value === 'tricapa' && currentItem.hasTricapa) {
-            unitPrice = currentItem.tricapa;
-            finishName = "Tricapa";
-        } else if (!finishGroup.classList.contains('hidden')) {
-            finishName = "Bicapa";
-        }
-
-        let totalPrice = unitPrice * qty;
-
-        cart.push({
-            name: currentItem.name,
-            finish: finishName,
-            price: totalPrice,
-            unitPrice: unitPrice,
-            qty: qty,
-            category: category
-        });
-
-        // Reset inputs
-        document.getElementById('search-input').value = '';
-        renderOptions(currentCategoryList);
-        document.getElementById('item').value = "";
-        currentItem = null;
-        document.getElementById('finish-group').classList.add('hidden');
-        qtyInput.value = 1; 
-
-        renderCart();
-    }
-
-    function remove(index) {
-        cart.splice(index, 1);
-        hasLatoneria = cart.some(item => item.category === 'latoneria');
-        renderCart();
-    }
-
-    function renderCart() {
-        const list = document.getElementById('cart-list');
-        const stickyFooter = document.getElementById('sticky-footer');
+        let pagoLatoneroBase = presupuestoProduccion - costoPintorTotal - otrosCostos;
         
-        const isLavado = document.getElementById('check-lavado').checked;
-        const isIVA = document.getElementById('check-iva').checked;
-        const isWompi = document.getElementById('check-wompi').checked;
-        const discountRate = parseFloat(document.getElementById('discount-select').value);
+        // 4. Agregar Monte y Desmonte
+        const costoMonte = incluyeMonte ? 80000 : 0;
+        const pagoLatoneroTotal = pagoLatoneroBase + costoMonte;
+
+        // 5. Ganancia REAL
+        const totalPagado = costoPintorTotal + otrosCostos + pagoLatoneroTotal;
+        const gananciaReal = cotizacion - totalPagado;
+        const porcentajeReal = cotizacion > 0 ? (gananciaReal / cotizacion) * 100 : 0;
+
+        // Renderizado
+        document.getElementById('res-cotizacion').innerText = formatMoney(cotizacion);
+        document.getElementById('res-num-piezas').innerText = numPiezas; // Muestra cantidad piezas
+        document.getElementById('res-pintor').innerText = formatMoney(costoPintorTotal);
+        document.getElementById('res-otros').innerText = formatMoney(otrosCostos);
         
-        list.innerHTML = '';
-        let subtotalItems = 0;
-
-        cart.forEach((item, index) => {
-            subtotalItems += item.price;
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="item-info">
-                    <div class="qty-badge">${item.qty}</div>
-                    <div>
-                        <div style="font-weight:600;">${item.name}</div>
-                        <div style="font-size:0.85rem; color:#666;">${item.finish} (${formatMoney(item.unitPrice)})</div>
-                    </div>
-                </div>
-                <div style="display:flex; align-items:center;">
-                    <span style="font-weight:bold; margin-right:10px;">${formatMoney(item.price)}</span>
-                    <button class="btn-remove" onclick="remove(${index})">&times;</button>
-                </div>
-            `;
-            list.appendChild(li);
-        });
-
-        // Calculos
-        let lavadoCost = isLavado ? 10000 : 0;
-        let baseAmount = subtotalItems + lavadoCost;
-
-        let discountAmount = baseAmount * discountRate;
-        let amountAfterDiscount = baseAmount - discountAmount;
-
-        let ivaCost = isIVA ? amountAfterDiscount * 0.19 : 0;
-        let amountAfterIVA = amountAfterDiscount + ivaCost;
-
-        let wompiCost = isWompi ? amountAfterIVA * 0.05 : 0;
-        let totalFinal = amountAfterIVA + wompiCost;
-
-        // Footer Update
-        document.getElementById('display-total').innerText = formatMoney(totalFinal);
-        
-        let footerDetails = "";
-        if (isLavado) footerDetails += "• Lavado ";
-        if (isIVA) footerDetails += "• IVA ";
-        if (isWompi) footerDetails += "• Wompi ";
-        
-        document.getElementById('footer-extras-text').innerText = footerDetails || "Sin extras";
-        
-        if (discountRate > 0) {
-            document.getElementById('footer-discount-text').style.display = 'inline';
-            document.getElementById('footer-discount-text').innerText = `• -${discountRate*100}%`;
+        const rowMonte = document.getElementById('row-monte');
+        if (incluyeMonte) {
+            rowMonte.style.display = 'flex';
         } else {
-            document.getElementById('footer-discount-text').style.display = 'none';
+            rowMonte.style.display = 'none';
+        }
+        
+        const elLatonero = document.getElementById('res-latonero');
+        const boxLatonero = document.getElementById('box-latonero');
+        
+        elLatonero.innerText = formatMoney(pagoLatoneroTotal);
+
+        if (pagoLatoneroTotal < 0) {
+            boxLatonero.classList.add('alert-loss');
+        } else {
+            boxLatonero.classList.remove('alert-loss');
         }
 
-        if (cart.length > 0 || isLavado) {
-            stickyFooter.classList.remove('hidden');
-        } else {
-            stickyFooter.classList.add('hidden');
-        }
+        document.getElementById('res-ganancia-real').innerText = formatMoney(gananciaReal);
+        document.getElementById('res-porcentaje-real').innerText = porcentajeReal.toFixed(1);
+
+        document.getElementById('resultados').style.display = 'block';
+        
+        setTimeout(() => {
+            boxLatonero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
     }
 
-    function copyToClipboard() {
-        if (cart.length === 0 && !document.getElementById('check-lavado').checked) {
-            alert("Agrega al menos un servicio.");
-            return;
-        }
-
-        const isIVA = document.getElementById('check-iva').checked;
-        const discountRate = parseFloat(document.getElementById('discount-select').value);
-        const days = document.getElementById('time-select').value;
-        const totalFinalStr = document.getElementById('display-total').innerText;
-
-        // 1. INTRO
-        let introText = "";
-        if (hasLatoneria) {
-            introText = "Gracias por enviarnos la foto. Analizando el daño, vemos que se requiere un trabajo técnico de latonería para recuperar la línea original y posteriormente pintura.";
-        } else {
-            introText = "Gracias por enviarnos la foto. En este caso las piezas no presentan golpes ni deformaciones, así que el trabajo es únicamente de pintura.";
-        }
-
-        let message = `${introText}\n\n`;
+    function resetCalculator() {
+        document.getElementById('cotizacion').value = '';
+        document.getElementById('cliente').selectedIndex = 0;
         
-        // 2. DIAGNOSTICO
-        message += `🔧 Diagnóstico técnico:\n\n`;
-        cart.forEach(item => {
-            let description = "";
-            if (item.category === 'latoneria') {
-                description = "requiere intervención técnica y restauración";
-            } else if (item.finish === 'Tricapa') {
-                 description = "requiere pintura completa tricapa (perlada)";
-            } else if (item.finish === 'Bicapa') {
-                 description = "requiere pintura completa bicapa";
-            } else {
-                 description = "requiere restauración/pintura";
-            }
-            
-            let qtyText = item.qty > 1 ? `${item.qty}x ` : "";
-            message += `• ${qtyText}${item.name}: ${description}.\n`;
-        });
+        // Reset Piezas
+        resetParts();
         
-        if (document.getElementById('check-lavado').checked) {
-             message += `• Servicio adicional: Lavado General.\n`;
-        }
+        document.getElementById('tipoPintura').selectedIndex = 0;
+        document.getElementById('alistamiento').selectedIndex = 0;
+        document.getElementById('matizada').checked = false;
+        document.getElementById('monteDesmonte').checked = false;
+        document.getElementById('utilidad').value = '50';
 
-        // 3. VALOR
-        let tituloPrecio = isIVA ? "💰 Valor estimado (CON IVA):" : "💰 Valor estimado (SIN IVA):";
-        message += `\n${tituloPrecio}\n\n`;
-
-        cart.forEach(item => {
-            let qtyText = item.qty > 1 ? `${item.qty}x ` : "";
-            message += `• ${qtyText}${item.name}: ${formatMoney(item.price)}\n`;
-        });
-
-        if (document.getElementById('check-lavado').checked) {
-            message += `• Lavado General: $10.000\n`;
-        }
-        
-        if (discountRate > 0) {
-            let baseAmount = cart.reduce((acc, item) => acc + item.price, 0) + (document.getElementById('check-lavado').checked ? 10000 : 0);
-            let discountVal = baseAmount * discountRate;
-            let discountTxt = (discountRate * 100) + "%";
-            message += `• Descuento aplicado (${discountTxt}): -${formatMoney(discountVal)}\n`;
-        }
-
-        if (document.getElementById('check-wompi').checked) {
-             message += `• Recargo pago Wompi (+5%)\n`;
-        }
-
-        message += `\n➡️ Total: ${totalFinalStr}\n`;
-
-        // 4. DISCLAIMER
-        if (!isIVA) {
-            message += `⚠️ Los valores no incluyen IVA. Este se adiciona al momento de facturar.\n`;
-        }
-
-        // 5. GARANTIA 6 MESES
-        message += `\n⏱️ Tiempo estimado:\n${days} días hábiles\n\n`;
-        message += `✨ Incluye:\n\n• Garantía de 6 meses\n• Recogida y entrega sin costo dentro de Bogotá\n• Acabado profesional tipo concesionario\n\n`;
-        message += `¿Deseas que coordinemos la recogida del vehículo? 🙌`;
-
-        navigator.clipboard.writeText(message).then(function() {
-            var x = document.getElementById("toast");
-            x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-        }, function(err) {
-            alert('Error al copiar.');
-        });
+        document.getElementById('resultados').style.display = 'none';
+        document.getElementById('cotizacion').focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // INICIAR GRID AL CARGAR
+    initPartsGrid();
 </script>
 
 </body>
